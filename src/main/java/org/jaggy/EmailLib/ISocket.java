@@ -24,7 +24,8 @@ public class ISocket {
     OutputStream ostream;
     public ISocket(String serverName, int port) {
         try {
-            socket = new Socket(InetAddress.getByName(serverName), port);
+            InetAddress server = InetAddress.getByName(serverName);
+            socket = new Socket(server.getHostAddress(), port);
             istream = socket.getInputStream();
             ostream = socket.getOutputStream();
             
