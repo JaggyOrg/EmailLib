@@ -1,19 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2014 JaggyOrg.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.jaggy.EmailLib;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -21,23 +24,9 @@ import java.util.logging.Logger;
  * @author Matthew
  */
 public class EmailLib {
-    public ISocket socket;
+    public ISocket isocket;
     private InputStream is;
+    public Logger log = Logger.getLogger("EmailLib");
+    public Session session = new Session();
 
-    public void session(String server, String username, String password, int port) {
-        socket = new ISocket(server, port);
-        is = socket.getInputStream();
-         ExecutorService service = Executors.newFixedThreadPool(4);
-        InputStreamReader reader = new InputStreamReader(is);
-        BufferedReader buffer = new BufferedReader(reader);
-        try {
-            int i = 1;
-            String line;
-            while ((line = buffer.readLine()) != null) {
-                service.execute(new Worker(line, this));
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(EmailLib.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        }
 }
