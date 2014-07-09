@@ -51,6 +51,12 @@
       <version>0.0.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec</artifactId>
+      <version>5.0.0.Alpha2-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
   </dependencies> 
   <scm>
 	<connection>scm:git:git@github.com:JaggyOrg/EmailLib.git</connection>

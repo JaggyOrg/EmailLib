@@ -16,7 +16,11 @@
 
 package org.jaggy.EmailLib;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,15 +29,32 @@ import java.io.OutputStream;
  public class Worker implements Runnable {
         private final String line;
         private OutputStream os;
+        boolean userSent = false;
+        private Session Session;
+        private DataOutputStream write;
 
         public Worker(String line, Session session) {
             this.line = line;
-            os = session.isocket.getOutputStream();
+            Session = session;
+            os = Session.isocket.getOutputStream();
+            write = new DataOutputStream(os);
         }
 
         @Override
         public void run() {
-            // Process line here.
-            System.out.println("Processing line: " + line);
+            try {
+                String[] parsed = line.split(" ", 2);
+                String r1 = parsed[0].toString();
+                String r2 = "", r3 = "";
+                if(parsed.length > 1 )r2 = parsed[1];
+                if(parsed.length > 2 )r3 = parsed[2];
+                String extras = "";
+                if(parsed.length > 3 ) extras = parsed[3];
+                if(r1.equals("220")) write.writeBytes("EHLO guess-me.mozilla.org\r\n");
+                 System.out.print("Processing line: " + r1+"-"+r2+" r3:"+r3+"\n");
+            } catch (IOException ex) {
+                Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        
     }
