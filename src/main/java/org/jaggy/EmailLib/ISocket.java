@@ -41,7 +41,7 @@ public class ISocket {
             ostream = socket.getOutputStream();
             
         } catch (IOException ex) {
-            Logger.getLogger(ISocket.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
     }
     public InputStream getInputStream() {
@@ -49,5 +49,16 @@ public class ISocket {
     }
     public OutputStream getOutputStream() {
         return ostream;
+    }
+
+    void close() {
+        
+        try {
+            ostream.close();
+            istream.close();
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ISocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

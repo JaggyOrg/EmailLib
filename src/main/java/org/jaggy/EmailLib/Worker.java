@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -29,7 +30,6 @@ import java.util.logging.Logger;
  public class Worker implements Runnable {
         private final String line;
         private OutputStream os;
-        boolean userSent = false;
         private Session Session;
         private DataOutputStream write;
 
@@ -51,10 +51,32 @@ import java.util.logging.Logger;
                 String extras = "";
                 if(parsed.length > 3 ) extras = parsed[3];
                 if(r1.equals("220")) write.writeBytes("EHLO guess-me.mozilla.org\r\n");
+                if(r1.equals("250") && r2.equalsIgnoreCase("AUTH LOGIN")) write.writeBytes("AUTH LOGIN\r\n");
+                if(r1.equals("535")) write.writeBytes("QUIT\r\n");
+                if(r1.equals("221")) Session.disconnect();
+                if(r1.equals("334")) {
+                    if(Session.getuserSent() == false) {
+                        Session.setuserSent(true);
+                        write.writeBytes(toBase64(Session.getProperty("mail.username"))+"\r\n");
+                        r3 = trim(toBase64(Session.getProperty("mail.username")));
+                    } else {
+                        write.writeBytes(toBase64(Session.getProperty("mail.password"))+"\r\n");
+                        r3 = toBase64(Session.getProperty("mail.password"));
+                    }
+                }
+                if(r1.equals("235")) Session.sendMail(Session.getProperty("mail.subject"), Session.getProperty("mail.to"), Session.getProperty("message"));
+                if(r1.equals("354")) Session.disconnect();
                  System.out.print("Processing line: " + r1+"-"+r2+" r3:"+r3+"\n");
             } catch (IOException ex) {
                 Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+        public String toBase64(String str) {
+            String base = DatatypeConverter.printBase64Binary(str.getBytes());
+            return base;
+        }
+
+    private String trim(String str) {
+        return str.replace("==", "");
+    }
     }
